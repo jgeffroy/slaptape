@@ -14,10 +14,10 @@ jobs:
           submodules: false
 
       - name: Clone JUCE
-        run: git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
+        run: git clone --depth 1 --branch 8.0.15 https://github.com/juce-framework/JUCE.git
 
       - name: Configure
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET=14.4
 
       - name: Build
         run: cmake --build build --config Release --parallel 3
@@ -38,7 +38,7 @@ jobs:
           submodules: false
 
       - name: Clone JUCE
-        run: git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
+        run: git clone --depth 1 --branch 8.0.15 https://github.com/juce-framework/JUCE.git
 
       - name: Configure
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
