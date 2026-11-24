@@ -1,0 +1,52 @@
+name: Build SlapTape Echo (VST3)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Clone JUCE
+        run: git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
+
+      - name: Configure
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 3
+
+      - name: Locate artefact
+        run: find build -iname "*.vst3" -maxdepth 6
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SlapTapeEcho-macOS
+          path: build/SlapTapeEcho_artefacts/Release/VST3/
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Clone JUCE
+        run: git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
+
+      - name: Configure
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 3
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SlapTapeEcho-Windows
+          path: build/SlapTapeEcho_artefacts/Release/VST3/
