@@ -1,4 +1,7 @@
-name: Build SlapTape Echo (VST3)
+name: Build AtelierDSP plugins (VST3)
+
+# Compile SlapTape Echo et DeciCrush pour macOS et Windows dans le cloud GitHub.
+# Les .vst3 sont ensuite téléchargeables depuis l'onglet Actions > run > Artifacts.
 
 on:
   workflow_dispatch:
@@ -10,8 +13,6 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: false
 
       - name: Clone JUCE
         run: git clone --depth 1 --branch 8.0.15 https://github.com/juce-framework/JUCE.git
@@ -22,20 +23,20 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel 3
 
-      - name: Locate artefact
+      - name: Locate artefacts
         run: find build -iname "*.vst3" -maxdepth 6
 
       - uses: actions/upload-artifact@v4
         with:
-          name: SlapTapeEcho-macOS
-          path: build/SlapTapeEcho_artefacts/Release/VST3/
+          name: AtelierDSP-macOS
+          path: |
+            build/SlapTapeEcho_artefacts/Release/VST3/
+            build/DeciCrush_artefacts/Release/VST3/
 
   build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: false
 
       - name: Clone JUCE
         run: git clone --depth 1 --branch 8.0.15 https://github.com/juce-framework/JUCE.git
@@ -48,5 +49,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: SlapTapeEcho-Windows
-          path: build/SlapTapeEcho_artefacts/Release/VST3/
+          name: AtelierDSP-Windows
+          path: |
+            build/SlapTapeEcho_artefacts/Release/VST3/
+            build/DeciCrush_artefacts/Release/VST3/
