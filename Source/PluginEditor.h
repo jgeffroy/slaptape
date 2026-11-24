@@ -2,8 +2,10 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginProcessor.h"
+#include "Common/UserPresets.h"
 
-class SlapTapeEchoAudioProcessorEditor : public juce::AudioProcessorEditor
+class SlapTapeEchoAudioProcessorEditor : public juce::AudioProcessorEditor,
+                                         private juce::Timer
 {
 public:
     explicit SlapTapeEchoAudioProcessorEditor (SlapTapeEchoAudioProcessor&);
@@ -13,23 +15,42 @@ public:
     void resized() override;
 
 private:
-    struct KnobWithLabel
+    enum Kind { KnobK, ToggleK, ComboK };
+
+    struct Control
     {
-        juce::Slider slider { juce::Slider::RotaryHorizontalVerticalDrag, juce::Slider::TextBoxBelow };
-        juce::Label label;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment;
+        juce::String id, label;
+        Kind kind;
+        int page;
+        std::unique_ptr<juce::Slider> slider;
+        std::unique_ptr<juce::ToggleButton> toggle;
+        std::unique_ptr<juce::ComboBox> combo;
+        juce::Label labelComp;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sAtt;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bAtt;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> cAtt;
+        juce::Component* comp() const
+        {
+            if (slider) return slider.get();
+            if (toggle) return toggle.get();
+            return combo.get();
+        }
     };
 
+    void add (const char* id, const char* label, Kind kind, int page);
+    void showPage (int page);
+    void timerCallback() override;
+    void updateEnabled();
+
     SlapTapeEchoAudioProcessor& processorRef;
+    std::vector<std::unique_ptr<Control>> controls;
 
-    KnobWithLabel mixKnob, timeKnob, feedbackKnob, toneKnob, hpfKnob, modRateKnob, modDepthKnob, driveKnob;
-
-    juce::ToggleButton slapButton { "Slap Mode" };
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> slapAttachment;
-
-    juce::Label titleLabel;
-
-    void setupKnob (KnobWithLabel& knob, const juce::String& paramId, const juce::String& text);
+    juce::TextButton pageButtons[3] { juce::TextButton ("Main"), juce::TextButton ("Style Edit"), juce::TextButton ("Rhythm") };
+    juce::TextButton tapButton { "Tap Tempo" };
+    juce::Label titleLabel, bpmLabel;
+    juce::ComboBox factoryBox;
+    atelier::PresetBar userPresets;
+    int currentPage = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SlapTapeEchoAudioProcessorEditor)
 };

@@ -1,6 +1,6 @@
 name: Build AtelierDSP plugins (VST3)
 
-# Compile SlapTape Echo et DeciCrush pour macOS et Windows dans le cloud GitHub.
+# Compile SlapTape Echo, DeciCrush et HeatSat pour macOS et Windows dans le cloud GitHub.
 # Les .vst3 sont ensuite téléchargeables depuis l'onglet Actions > run > Artifacts.
 
 on:
@@ -32,6 +32,7 @@ jobs:
           path: |
             build/SlapTapeEcho_artefacts/Release/VST3/
             build/DeciCrush_artefacts/Release/VST3/
+            build/HeatSat_artefacts/Release/VST3/
 
   build-windows:
     runs-on: windows-latest
@@ -53,3 +54,4 @@ jobs:
           path: |
             build/SlapTapeEcho_artefacts/Release/VST3/
             build/DeciCrush_artefacts/Release/VST3/
+            build/HeatSat_artefacts/Release/VST3/

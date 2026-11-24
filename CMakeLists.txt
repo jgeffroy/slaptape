@@ -56,7 +56,7 @@ juce_add_plugin(DeciCrush
     FORMATS VST3
     PRODUCT_NAME "DeciCrush"
     IS_SYNTH FALSE
-    NEEDS_MIDI_INPUT FALSE
+    NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
     VST3_CATEGORIES "Fx" "Distortion"
@@ -78,6 +78,46 @@ target_compile_definitions(DeciCrush
 target_link_libraries(DeciCrush
     PRIVATE
         juce::juce_audio_utils
+        juce::juce_dsp
+    PUBLIC
+        juce::juce_recommended_config_flags
+        juce::juce_recommended_lto_flags
+        juce::juce_recommended_warning_flags
+)
+
+# ---------------------------------------------------------------------------
+# Plugin 3: HeatSat (multi-style saturator)
+# ---------------------------------------------------------------------------
+juce_add_plugin(HeatSat
+    COMPANY_NAME "AtelierDSP"
+    PLUGIN_MANUFACTURER_CODE Atdp
+    PLUGIN_CODE Htst
+    FORMATS VST3
+    PRODUCT_NAME "HeatSat"
+    IS_SYNTH FALSE
+    NEEDS_MIDI_INPUT FALSE
+    NEEDS_MIDI_OUTPUT FALSE
+    EDITOR_WANTS_KEYBOARD_FOCUS FALSE
+    VST3_CATEGORIES "Fx" "Distortion"
+)
+
+target_sources(HeatSat
+    PRIVATE
+        Source/HeatSat/HeatProcessor.cpp
+        Source/HeatSat/HeatEditor.cpp
+)
+
+target_compile_definitions(HeatSat
+    PUBLIC
+        JUCE_WEB_BROWSER=0
+        JUCE_USE_CURL=0
+        JUCE_VST3_CAN_REPLACE_VST2=0
+)
+
+target_link_libraries(HeatSat
+    PRIVATE
+        juce::juce_audio_utils
+        juce::juce_dsp
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

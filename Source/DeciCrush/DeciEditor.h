@@ -2,8 +2,10 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "DeciProcessor.h"
+#include "../Common/UserPresets.h"
 
-class DeciCrushEditor : public juce::AudioProcessorEditor
+class DeciCrushEditor : public juce::AudioProcessorEditor,
+                        private juce::Timer
 {
 public:
     explicit DeciCrushEditor (DeciCrushProcessor&);
@@ -11,6 +13,7 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    void mouseDown (const juce::MouseEvent&) override;
 
 private:
     struct Knob
@@ -33,6 +36,8 @@ private:
         std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> attachment;
     };
 
+    void timerCallback() override;
+    void registerLearnTarget (juce::Component&, const char* paramId);
     void setupKnob   (Knob&, const char* paramId, const char* text);
     void setupToggle (Toggle&, const char* paramId, const char* text);
     void setupCombo  (Combo&, const char* paramId, const char* text, const juce::StringArray& items);
@@ -44,10 +49,16 @@ private:
     Toggle quantOn, dcShift, resOn, approxOn, imagesOn;
     Combo filterType, filterOrder;
 
-    juce::ComboBox presetBox;
+    Combo quality, renderQ, inputMode, lfoShape, lfoNote;
+    Knob lfoRate, lfoFreq, lfoBits, lfoJit;
+    Toggle lfoOn, lfoSync;
+    juce::ComboBox presetBox, sizeBox;
+    atelier::PresetBar presetBar;
+    std::vector<std::pair<juce::Component*, juce::String>> learnTargets;
+    juce::String learnHint;
     juce::Label titleLabel;
 
-    juce::Rectangle<int> panelInput, panelQuant, panelRes, panelFilter, panelMaster;
+    juce::Rectangle<int> panelInput, panelQuant, panelRes, panelFilter, panelMaster, panelLfo, panelOptions;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeciCrushEditor)
 };
